@@ -1,25 +1,29 @@
 const jwt = require('jsonwebtoken')
+require('dotenv').config()
 
 async function verifAuth(req, res, next) {
-    const token = req.header('auth')
+    const token = req.headers["x-access-token"]
+
     if (!token)
         return res.status(400).send('Access Denied')
 
     try {
-        const verif = jwt.verify(token, process.env.ACCESS_TOKEN)
+        const verif = jwt.verify(token.toString(), process.env.ACCESS_TOKEN)
         req.user = verif
-        next()
+        console.log('masukcin ' + verif)
     } catch (error) {
-        res.status(400).send('Invalid Token')
+        return console.error(error)
+        //res.status(400).send('Invalid Token')
 
     }
+    return next()
 
 }
 
 module.exports = {
-    verifAuth
-}
-// const jwt = require('jsonwebtoken');
+        verifAuth
+        }
+        // const jwt = require('jsonwebtoken');
 
 // async function verifyJWT(headers, reply) {
 //     var token = headers.replace('Bearer ', '');

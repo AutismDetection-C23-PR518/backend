@@ -73,7 +73,6 @@ async function register(req, res) {
 }
 
 async function login(req, res) {
-    //const sql = `UPDATE user SET access_token=? WHERE username=? OR email=? `
     var findUser, log, sql, token
 
     const username = req.body.username
@@ -135,7 +134,6 @@ async function login(req, res) {
 async function updateProfile(req, res) {
     const sql = `UPDATE user SET username =?, email=?,name=?,password=?,created_at=? WHERE id_user =?`
     const created_at = moment().format('YYYY-MM-DD HH:mm:ss').toString()
-        //const id = await verifikasi.verifAuth(req.headers.authorization, res)
     const hashPassword = await bcrypt.hash(req.body.password, 12)
 
     const user = {
@@ -144,7 +142,7 @@ async function updateProfile(req, res) {
         name: req.body.name,
         password: hashPassword,
         created_at: created_at,
-            id: req.body.id_user
+        id: req.body.id_user
     }
     if (req.body.password.length < 8)
         return res.status(400).send('Password minimal 8 karakter!')
@@ -157,14 +155,14 @@ async function updateProfile(req, res) {
             return res.status(500).send('There\'s something wrong')
 
         }
-        return res.status(200).json({
-                username: user.username,
-                    email: user.email,
-                    name: user.name,
-                    password: user.password,
-                    created_at: user.created_at
-                })
-            //return res.status(200).send('Updated')
+        // return res.status(200).json({
+        //         username: user.username,
+        //             email: user.email,
+        //             name: user.name,
+        //             password: user.password,
+        //             created_at: user.created_at
+        //         })
+        return res.status(200).send('Updated')
     })
 
 

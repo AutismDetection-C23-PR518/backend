@@ -73,6 +73,7 @@ async function register(req, res) {
 }
 
 async function login(req, res) {
+    //const sql = `UPDATE user SET access_token=? WHERE username=? OR email=? `
     var findUser, log, sql, token
 
     const username = req.body.username
@@ -127,13 +128,14 @@ async function login(req, res) {
                 accessToken: accessToken,
             })
         })
-        res.header('x-access-token', accessToken)
+        res.header('auth', accessToken)
     })
 }
 
 async function updateProfile(req, res) {
-    const sql = `UPDATE user SET username =?, email=?,name=?,password=?,created_at=? WHERE id_user =?`
+    const sql = `UPDATE user SET ( username, email,name,password,created_at) VALUE (?,?,?,?,?) WHERE id_user =?`
     const created_at = moment().format('YYYY-MM-DD HH:mm:ss').toString()
+    const id = await verifikasi.verifAuth(req.headers.authorization, res)
     const hashPassword = await bcrypt.hash(req.body.password, 12)
 
     const user = {
@@ -141,53 +143,73 @@ async function updateProfile(req, res) {
         email: req.body.email,
         name: req.body.name,
         password: hashPassword,
-        created_at: created_at,
-        id: req.body.id_user
+        created_at: created_at
     }
     if (req.body.password.length < 8)
         return res.status(400).send('Password minimal 8 karakter!')
 
-    db.query(sql, [user.username, user.email, user.name, user.password, user.created_at, user.id], async function (error, rows) {
+    db.query(sql, [user.username, user.email, user.name, user.password, user.created_at, id], async function (error, rows) {
         if (error) {
             if (error.code === 'ER_DUP_ENTRY') {
                 return res.status(400).send(`${user.email || user.username} already exist `)
             }
+            console.error(error)
             return res.status(500).send('There\'s something wrong')
 
         }
-        // return res.status(200).json({
-        //         username: user.username,
-        //             email: user.email,
-        //             name: user.name,
-        //             password: user.password,
-        //             created_at: user.created_at
-        //         })
-        return res.status(200).send('Updated')
-    })
+        return res.status(200).json({
+            username: user.username,
+            email: user.email,
+            name: user.name,
+            password: user.password,
+            created_at: user.created_at
+        })
 
+    })
+    return res.status(200).send('Updated')
 
 }
 
-// app.post(`${version}/story`, async (req, res) => {
-//     const sql = `INSERT INTO post (user_id, stori, created_at) VALUES( ?, ?, ?)`
-//     const created_at = moment().format('YYYY-MM-DD HH:mm:ss').toString()
+async function create_post(req, res) {
+    const sql = `INSERT INTO post (user_id, stori, created_at) VALUES( ?, ?, ?)`
+    const created_at = moment().format('YYYY-MM-DD HH:mm:ss').toString()
+    const story = {
+        user_id: req.params.id,
+        stori: req.body.stori,
+        created_at: created_at
+    }
+    db.query(sql, [story.user_id, story.stori, story.created_at], async function (error, rows) {
+        if (error) {
+            console.error(error)
+            return res.status(500).send('There\'s something wrong')
+        }
+        else{
+            return res.status(200).send(story)
+        }
+    })
+}
 
-//     const story = {
-//         user_id: req.body.user_id,
-//         stori: req.body.stori,
-//         created_at: created_at
-//     }
-//     db.query(sql, [story.user_id, story.story, story.created_at], async function (error, rows) {
-//         if (error) {
-//             console.error(error)
-//             return res.status(500).send('There\'s something wrong')
-//         }
-//     })
-// })
+
+async function delete_post(req, res) {
+    db.query(`DELETE FROM post WHERE id_user =`+req.params.id `AND id_post =`+req.params.post_id, (error,result)=>{
+    if (err) throw err;
+        console.log("Number of records deleted: " + result.affectedRows);
+    })
+}
+
+async function delete_user(req, res) {
+    db.query("DELETE FROM user WHERE id_user ="+req.params.id, (error,result)=>{
+        if (err) throw err;
+        console.log("Number of records deleted: " + result.affectedRows);
+    })
+}
 
 module.exports = {
     users,
     register,
     login,
-    updateProfile
+    updateProfile,
+    delete_user,
+    create_post,
+    delete_post
 }

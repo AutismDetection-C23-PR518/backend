@@ -174,7 +174,7 @@ async function create_post(req, res) {
     const sql = `INSERT INTO post (user_id, stori, created_at) VALUES( ?, ?, ?)`
     const created_at = moment().format('YYYY-MM-DD HH:mm:ss').toString()
     const story = {
-        user_id: req.params.id,
+        user_id: req.body.user_id,
         stori: req.body.stori,
         created_at: created_at
     }
@@ -189,18 +189,20 @@ async function create_post(req, res) {
     })
 }
 
-
 async function delete_post(req, res) {
-    db.query(`DELETE FROM post WHERE id_user =`+req.params.id `AND id_post =`+req.params.post_id, (error,result)=>{
-    if (err) throw err;
-        console.log("Number of records deleted: " + result.affectedRows);
+    const user_id= req.body.user_id
+    const id_post= req.body.id_post
+    db.query("DELETE FROM post WHERE id_post=? AND user_id =? ",[id_post, user_id], (error,result)=>{
+        if (error) throw error;
+        return res.send("Number of records deleted: " + result.affectedRows)
     })
 }
 
 async function delete_user(req, res) {
-    db.query("DELETE FROM user WHERE id_user ="+req.params.id, (error,result)=>{
-        if (err) throw err;
-        console.log("Number of records deleted: " + result.affectedRows);
+    const id_user= req.body.id_user
+    db.query("DELETE FROM user WHERE id_user =? ",[id_user], (error,result)=>{
+        if (error) throw error;
+        return res.send("Number of records deleted: " + result.affectedRows);
     })
 }
 

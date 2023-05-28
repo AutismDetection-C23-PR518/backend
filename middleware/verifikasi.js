@@ -10,7 +10,6 @@ async function verifAuth(req, res, next) {
     try {
         const verif = jwt.verify(token.toString(), process.env.ACCESS_TOKEN)
         req.user = verif
-        console.log('masukcin ' + verif)
     } catch (error) {
         return res.status(400).send('Invalid Token')
 
@@ -21,4 +20,4 @@ async function verifAuth(req, res, next) {
 
 module.exports = {
     verifAuth
-    }
+}

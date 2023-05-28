@@ -73,7 +73,7 @@ async function register(req, res) {
 }
 
 async function login(req, res) {
-    var findUser, log, sql, token
+    var findUser, log, sql, tokenUser
 
     const username = req.body.username
     const email = req.body.email
@@ -135,19 +135,18 @@ async function updateProfile(req, res) {
     const sql = `UPDATE user SET username =?, email=?,name=?,password=?,created_at=? WHERE id_user =?`
     const created_at = moment().format('YYYY-MM-DD HH:mm:ss').toString()
     const hashPassword = await bcrypt.hash(req.body.password, 12)
-
+    const id_user = req.body.id_user
     const user = {
         username: req.body.username,
         email: req.body.email,
         name: req.body.name,
         password: hashPassword,
         created_at: created_at,
-        id: req.body.id_user
     }
     if (req.body.password.length < 8)
         return res.status(400).send('Password minimal 8 karakter!')
 
-    db.query(sql, [user.username, user.email, user.name, user.password, user.created_at, user.id], async function (error, rows) {
+    db.query(sql, [user.username, user.email, user.name, user.password, user.created_at, id_user], async function (error, rows) {
         if (error) {
             if (error.code === 'ER_DUP_ENTRY') {
                 return res.status(400).send(`${user.email || user.username} already exist `)
@@ -155,17 +154,123 @@ async function updateProfile(req, res) {
             return res.status(500).send('There\'s something wrong')
 
         }
-        // return res.status(200).json({
-        //         username: user.username,
-        //             email: user.email,
-        //             name: user.name,
-        //             password: user.password,
-        //             created_at: user.created_at
-        //         })
-        return res.status(200).send('Updated')
+        return res.status(200).json({
+        username: user.username,
+        email: user.email,
+        name: user.name,
+        password: user.password,
+        created_at: user.created_at
+        })
+        //return res.status(200).send('Updated')
+        })
+
+
+        }
+
+        async function getProfile(req, res) {
+            const sql = `SELECT * FROM user WHERE id_user=?`
+            const id_user = req.body.id_user
+
+            db.query(sql, [id_user], async function (error, rows) {
+                if (error) {
+                    console.error(error)
+                    return res.status(500).send(error)
+                }
+                if (rows.length > 0) {
+                    return res.status(200).json({
+                        name: rows[0].name,
+                        username: rows[0].username,
+                        email: rows[0].email
+                    })
+                }
+
+            })
+            //return res.status(200).send('Success')
+        }
+
+        async function delete_user(req, res) {
+            const id_user = req.body.id_user
+            db.query("DELETE FROM user WHERE id_user =? ", [id_user], (error, result) => {
+                if (error) throw error;
+                return res.send("Number of records deleted: " + result.affectedRows);
+            })
+
+        }
+
+        async function create_post(req, res) {
+            const sql = `INSERT INTO post (user_id, stori, created_at) VALUES( ?, ?, ?)`
+            const created_at = moment().format('YYYY-MM-DD HH:mm:ss').toString()
+            const story = {
+                user_id: req.body.user_id,
+                stori: req.body.stori,
+                created_at: created_at
+            }
+            db.query(sql, [story.user_id, story.stori, story.created_at], async function (error, rows) {
+                if (error) {
+                    console.error(error)
+                    return res.status(500).send('There\'s something wrong')
+                } else {
+                    return res.status(200).send(story)
+                }
+            })
+        }
+
+        async function delete_post(req, res) {
+                const user_id = req.body.user_id
+                const id_post = req.body.id_post
+                db.query("DELETE FROM post WHERE id_post=? AND user_id =? ", [id_post, user_id], (error, result) => {
+                            if (error) throw error;
+                            return res.send("Number of records deleted: " + result.affectedRows)
     })
+}
 
+async function getAllStory(req, res) {
 
+}
+
+async function getStoryUser(req, res) {
+
+}
+
+async function postDetectionUser(req, res) {
+
+}
+async function getDetectionUser(req, res) {
+
+}
+
+async function postTest(req, res) {
+    const sql = `INSERT INTO test (user_id, A1, A2, A3, A4, A5, A6, A7, A8, A9, A10, Q_score, umur_balita, gender, etnis, jaundice, keluarga_ASD, who_test, created_at) VALUES( ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`
+    const created_at = moment().format('YYYY-MM-DD HH:mm:ss').toString()
+    const user_id = req.body.id_user
+    const test = {
+        A1: req.body.A1,
+        A2: req.body.A2,
+        A3: req.body.A3,
+        A4: req.body.A4,
+        A5: req.body.A5,
+        A6: req.body.A6,
+        A7: req.body.A7,
+        A8: req.body.A8,
+        A9: req.body.A9,
+        A10: req.body.A10,
+        Q_score: req.body.Q_score,
+        umur_balita: req.body.umur_balita,
+        gender: req.body.gender,
+        etnis: req.body.etnis,
+        jaundice: req.body.jaundice,
+        keluarga_ASD: req.body.keluarga_ASD,
+        who_test: req.body.who_test,
+        created_at: created_at
+    }
+    db.query(sql, [user_id, test.A1, test.A2], async function (error, rows) {
+        if (error) {
+            console.error(error)
+            return res.status(500).send('There\'s something wrong')
+        } else {
+            return res.status(200).send(story)
+        }
+    })
 }
 
 // app.post(`${version}/story`, async (req, res) => {
@@ -189,5 +294,9 @@ module.exports = {
     users,
     register,
     login,
-    updateProfile
+    updateProfile,
+    getProfile,
+    delete_user,
+    create_post,
+    delete_post
 }

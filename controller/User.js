@@ -198,7 +198,7 @@ async function delete_user(req, res) {
 }
 
 async function create_post(req, res) {
-    const sql = `INSERT INTO post (user_id, stori, created_at) VALUES( ?, ?, ?)`
+    const sql = `INSERT INTO post (user_id, stori, created_at, sum_like) VALUES( ?, ?, ?, 0)`
     const created_at = moment().format('YYYY-MM-DD HH:mm:ss').toString()
     const story = {
         user_id: req.body.user_id,
@@ -209,18 +209,34 @@ async function create_post(req, res) {
         if (error) {
             console.error(error)
             return res.status(500).send('There\'s something wrong')
-        } else {
+        }
+        else{
             return res.status(200).send(story)
         }
     })
 }
 
 async function delete_post(req, res) {
-    const user_id = req.body.user_id
     const id_post = req.body.id_post
-    db.query("DELETE FROM post WHERE id_post=? AND user_id =? ", [id_post, user_id], (error, result) => {
+    db.query("DELETE FROM post WHERE id_post=? ", [id_post], (error, result) => {
         if (error) throw error;
         return res.send("Number of records deleted: " + result.affectedRows)
+    })
+}
+
+async function like_post(req, res) {
+    const id_post= req.body.id_post
+    db.query("UPDATE post SET sum_like=sum_like+1 WHERE id_post =? ",[id_post], (error,result)=>{
+        if (error) throw error;
+        return res.send("Number of records affected: " + result.affectedRows);
+    })
+}
+
+async function unlike_post(req, res) {
+    const id_post= req.body.id_post
+    db.query("UPDATE post SET sum_like=sum_like-1 WHERE id_post =? AND sum_like>0",[id_post], (error,result)=>{
+        if (error) throw error;
+        return res.send("Number of records affected: " + result.affectedRows);
     })
 }
 
@@ -298,5 +314,7 @@ module.exports = {
     getProfile,
     delete_user,
     create_post,
-    delete_post
+    delete_post,
+    like_post,
+    unlike_post
 }

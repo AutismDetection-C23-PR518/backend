@@ -9,7 +9,7 @@ router.get(`${version}/users`, userController.users)
 router.post(`${version}/register`, userController.register)
 router.post(`${version}/login`, userController.login)
 router.put(`${version}/updateprofile`, verif.verifAuth, userController.updateProfile)
-router.get(`${version}/getprofile/`, verif.verifAuth, userController.getProfile)
+router.get(`${version}/getprofile/:id_user`, verif.verifAuth, userController.getProfile)
 router.delete(`${version}/delete_user`, userController.delete_user)
 
 //post
@@ -17,5 +17,5 @@ router.post(`${version}/create_post`, userController.create_post)
 router.delete(`${version}/delete_post`, userController.delete_post)
 
 //deteksi
-
+router.post(`${version}/posttest`, userController.postTest)
 module.exports = router

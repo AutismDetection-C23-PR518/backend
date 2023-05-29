@@ -73,8 +73,8 @@ async function register(req, res) {
 }
 
 async function login(req, res) {
-    var findUser, log, sql, tokenUser
-
+    var findUser, log, sql, tokenUser, hashPassword, check_email, check_username
+    const password = req.body.password
     const username = req.body.username
     const email = req.body.email
     if (email == null) {
@@ -86,12 +86,12 @@ async function login(req, res) {
         sql = `UPDATE user SET access_token=? WHERE email=?`
         log = email
     }
-
-    const password = req.body.password
     const user = {
         log: log
     }
     db.query(findUser, [user.log], async function (error, rows) {
+                    //check_email = rows[0].email
+                    //check_username = rows[0].username
         if (error) {
             console.error(error)
             return res.status(500).send('There\'s something wrong')
@@ -100,34 +100,31 @@ async function login(req, res) {
             id: rows[0].id_user,
             name: rows[0].name
         }
+        hashPassword = rows[0].password
+        if (rows.length > 0 && password != undefined) {
+            const match = await bcrypt.compare(password, hashPassword)
+            if (!match) {
+                if (password != undefined) {
+                    return res.status(400).send('Please enter the correct password')
+                }
+
+            }
+        }
         const accessToken = generateToken(tokenUser)
         db.query(sql, [accessToken, user.log], async function (error, rows) {
             if (error) {
                 console.error(error)
                 return res.status(500).send('ERROR')
             }
-            if (rows.length > 0 && password != undefined) {
-                const matchPass = bcrypt.compareSync(password, rows[0].password)
 
-                if (!matchPass) {
-                    return res.status(400).send('Wrong password!')
-                }
-                return res.json({
+        })
+        return res.status(200).json({
                     error: false,
-                    msg: 'Success',
-                    token: tokenUser,
-                    accessToken: accessToken,
-                })
-
-            }
-            return res.status(200).json({
-                error: false,
-                msg: 'Success',
-                token: tokenUser,
+            message: 'Success',
+                result: tokenUser,
                 accessToken: accessToken,
             })
-        })
-        res.header('x-access-token', accessToken)
+        res.header('token', accessToken)
     })
 }
 
@@ -135,7 +132,7 @@ async function updateProfile(req, res) {
     const sql = `UPDATE user SET username =?, email=?,name=?,password=?,created_at=? WHERE id_user =?`
     const created_at = moment().format('YYYY-MM-DD HH:mm:ss').toString()
     const hashPassword = await bcrypt.hash(req.body.password, 12)
-    const id_user = req.body.id_user
+    const id_user = await verifikasi.verifAuth(req.headers.id_user, res)
     const user = {
         username: req.body.username,
         email: req.body.email,
@@ -155,13 +152,13 @@ async function updateProfile(req, res) {
 
         }
         return res.status(200).json({
-            username: user.username,
-            email: user.email,
-            name: user.name,
-            password: user.password,
-            created_at: user.created_at
-        })
-        //return res.status(200).send('Updated')
+                username: user.username,
+                    email: user.email,
+                    name: user.name,
+                    password: user.password,
+                    created_at: user.created_at
+                })
+                //return res.status(200).send('Updated')
     })
 
 
@@ -169,23 +166,25 @@ async function updateProfile(req, res) {
 
 async function getProfile(req, res) {
     const sql = `SELECT * FROM user WHERE id_user=?`
-    const id_user = req.body.id_user
+        //const id_user = req.body.id_user
+        const id = req.params.id_user
 
-    db.query(sql, [id_user], async function (error, rows) {
-        if (error) {
-            console.error(error)
-            return res.status(500).send(error)
-        }
-        if (rows.length > 0) {
-            return res.status(200).json({
-                name: rows[0].name,
-                username: rows[0].username,
-                email: rows[0].email
-            })
-        }
+    db.query(sql, [id], async function (error, rows) {
+                    if (error) {
+                        console.error(error)
+                        return res.status(500).send(error)
+                    }
+                    if (rows.length > 0) {
+                        return res.status(200).json({
+                            name: rows[0].name,
+                            username: rows[0].username,
+                            email: rows[0].email
+                        })
+                    }
 
-    })
-    //return res.status(200).send('Success')
+        })
+        //return res.status(200).send('Success')
+
 }
 
 async function delete_user(req, res) {
@@ -224,8 +223,16 @@ async function delete_post(req, res) {
     })
 }
 
-async function getAllStory(req, res) {
-
+async function getAllPost(req, res) {
+        const sql = `select * from post`
+        db.query(sql, (err, result, field) => {
+            if (err) {
+                return res.status(500).json({
+                    error: 'there\'s something wrong'
+                })
+            }
+            res.status(200).json(result)
+        })
 }
 
 async function getStoryUser(req, res) {
@@ -242,7 +249,9 @@ async function getDetectionUser(req, res) {
 async function postTest(req, res) {
     const sql = `INSERT INTO test (user_id, A1, A2, A3, A4, A5, A6, A7, A8, A9, A10, Q_score, umur_balita, gender, etnis, jaundice, keluarga_ASD, who_test, created_at) VALUES( ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`
     const created_at = moment().format('YYYY-MM-DD HH:mm:ss').toString()
-    const user_id = req.body.id_user
+    const id = `SELECT id_user FROM user WHERE id_user =?`
+    const id_user = req.body.id_user
+    console.log(id_user)
     const test = {
         A1: req.body.A1,
         A2: req.body.A2,
@@ -263,14 +272,49 @@ async function postTest(req, res) {
         who_test: req.body.who_test,
         created_at: created_at
     }
-    db.query(sql, [user_id, test.A1, test.A2], async function (error, rows) {
-        if (error) {
-            console.error(error)
-            return res.status(500).send('There\'s something wrong')
-        } else {
-            return res.status(200).send(story)
-        }
+    var iduser
+    db.query(id, [id_user], async function (error, rows) {
+                    if (error) {
+                        console.error(error)
+                        return res.status(500).send(error)
+                    }
+                    if (rows.length > 0) {
+                        iduser = rows[0].id_user
+                    }
+                    db.query(sql, [iduser, test.A1, test.A2, test.A3, test.A4, test.A5, test.A6, test.A7, test.A8, test.A9, test.A10, test.Q_score, test.umur_balita, test.gender, test.etnis, test.jaundice, test.keluarga_ASD, test.who_test, test.created_at], async function (error, rows) {
+                                    if (error) {
+                                        console.error(error)
+                                        return res.status(500).send('There\'s something wrong')
+            }
+            if (iduser == null) {
+                return res.status(500).send(error)
+            } else {
+                return res.status(200).json({
+                    user_id: id_user,
+                    A1: test.A1,
+                    A2: test.A2,
+                    A3: test.A3,
+                    A4: test.A4,
+                    A5: test.A5,
+                    A6: test.A6,
+                    A7: test.A7,
+                    A8: test.A8,
+                    A9: test.A9,
+                    A10: test.A10,
+                    Q_score: test.Q_score,
+                    umur_balita: test.umur_balita,
+                    gender: test.gender,
+                    etnis: test.etnis,
+                    jaundice: test.jaundice,
+                    keluarga_ASD: test.keluarga_ASD,
+                    who_test: test.who_test,
+                    created_at: created_at
+
+                })
+                }
+        })
     })
+
 }
 
 // app.post(`${version}/story`, async (req, res) => {
@@ -298,5 +342,6 @@ module.exports = {
     getProfile,
     delete_user,
     create_post,
-    delete_post
+    delete_post,
+    postTest
 }

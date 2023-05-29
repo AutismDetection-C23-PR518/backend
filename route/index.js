@@ -15,14 +15,7 @@ router.delete(`${version}/delete_user`, userController.delete_user)
 //post
 router.post(`${version}/create_post`, userController.create_post)
 router.delete(`${version}/delete_post`, userController.delete_post)
-router.put(`${version}/like_post`, userController.like_post)
-router.put(`${version}/unlike_post`, userController.unlike_post)
 
 //deteksi
-<<<<<<< HEAD
 router.post(`${version}/posttest`, userController.postTest)
 module.exports = router
-=======
-
-module.exports = router
->>>>>>> 23d6e9fce79cf43e183d1b8de19811015570ee17

@@ -15,6 +15,8 @@ router.delete(`${version}/delete_user`, userController.delete_user)
 //post
 router.post(`${version}/create_post`, userController.create_post)
 router.delete(`${version}/delete_post`, userController.delete_post)
+router.put(`${version}/like_post`, userController.like_post)
+router.put(`${version}/unlike_post`, userController.unlike_post)
 
 //deteksi
 

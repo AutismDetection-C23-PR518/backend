@@ -90,8 +90,8 @@ async function login(req, res) {
         log: log
     }
     db.query(findUser, [user.log], async function (error, rows) {
-                    //check_email = rows[0].email
-                    //check_username = rows[0].username
+        //check_email = rows[0].email
+        //check_username = rows[0].username
         if (error) {
             console.error(error)
             return res.status(500).send('There\'s something wrong')
@@ -119,11 +119,11 @@ async function login(req, res) {
 
         })
         return res.status(200).json({
-                    error: false,
+            error: false,
             message: 'Success',
-                result: tokenUser,
-                accessToken: accessToken,
-            })
+            result: tokenUser,
+            accessToken: accessToken,
+        })
         res.header('token', accessToken)
     })
 }
@@ -152,13 +152,13 @@ async function updateProfile(req, res) {
 
         }
         return res.status(200).json({
-                username: user.username,
-                    email: user.email,
-                    name: user.name,
-                    password: user.password,
-                    created_at: user.created_at
-                })
-                //return res.status(200).send('Updated')
+            username: user.username,
+            email: user.email,
+            name: user.name,
+            password: user.password,
+            created_at: user.created_at
+        })
+        //return res.status(200).send('Updated')
     })
 
 
@@ -166,24 +166,24 @@ async function updateProfile(req, res) {
 
 async function getProfile(req, res) {
     const sql = `SELECT * FROM user WHERE id_user=?`
-        //const id_user = req.body.id_user
-        const id = req.params.id_user
+    //const id_user = req.body.id_user
+    const id = req.params.id_user
 
     db.query(sql, [id], async function (error, rows) {
-                    if (error) {
-                        console.error(error)
-                        return res.status(500).send(error)
-                    }
-                    if (rows.length > 0) {
-                        return res.status(200).json({
-                            name: rows[0].name,
-                            username: rows[0].username,
-                            email: rows[0].email
-                        })
-                    }
+        if (error) {
+            console.error(error)
+            return res.status(500).send(error)
+        }
+        if (rows.length > 0) {
+            return res.status(200).json({
+                name: rows[0].name,
+                username: rows[0].username,
+                email: rows[0].email
+            })
+        }
 
-        })
-        //return res.status(200).send('Success')
+    })
+    //return res.status(200).send('Success')
 
 }
 
@@ -224,15 +224,15 @@ async function delete_post(req, res) {
 }
 
 async function getAllPost(req, res) {
-        const sql = `select * from post`
-        db.query(sql, (err, result, field) => {
-            if (err) {
-                return res.status(500).json({
-                    error: 'there\'s something wrong'
-                })
-            }
-            res.status(200).json(result)
-        })
+    const sql = `select * from post`
+    db.query(sql, (err, result, field) => {
+        if (err) {
+            return res.status(500).json({
+                error: 'there\'s something wrong'
+            })
+        }
+        res.status(200).json(result)
+    })
 }
 
 async function getStoryUser(req, res) {
@@ -274,17 +274,17 @@ async function postTest(req, res) {
     }
     var iduser
     db.query(id, [id_user], async function (error, rows) {
-                    if (error) {
-                        console.error(error)
-                        return res.status(500).send(error)
-                    }
-                    if (rows.length > 0) {
-                        iduser = rows[0].id_user
-                    }
-                    db.query(sql, [iduser, test.A1, test.A2, test.A3, test.A4, test.A5, test.A6, test.A7, test.A8, test.A9, test.A10, test.Q_score, test.umur_balita, test.gender, test.etnis, test.jaundice, test.keluarga_ASD, test.who_test, test.created_at], async function (error, rows) {
-                                    if (error) {
-                                        console.error(error)
-                                        return res.status(500).send('There\'s something wrong')
+        if (error) {
+            console.error(error)
+            return res.status(500).send(error)
+        }
+        if (rows.length > 0) {
+            iduser = rows[0].id_user
+        }
+        db.query(sql, [iduser, test.A1, test.A2, test.A3, test.A4, test.A5, test.A6, test.A7, test.A8, test.A9, test.A10, test.Q_score, test.umur_balita, test.gender, test.etnis, test.jaundice, test.keluarga_ASD, test.who_test, test.created_at], async function (error, rows) {
+            if (error) {
+                console.error(error)
+                return res.status(500).send('There\'s something wrong')
             }
             if (iduser == null) {
                 return res.status(500).send(error)
@@ -311,7 +311,7 @@ async function postTest(req, res) {
                     created_at: created_at
 
                 })
-                }
+            }
         })
     })
 

@@ -17,17 +17,17 @@ require('dotenv').config()
 
 //     return result_id
 // }
+//----------------------------------------
 async function verifAuth(req, res, next) {
-    // const token = req.headers('x-access-token')
-    const token = (req.headers['x-access-token'])
+    const auth = (req.headers['authorization'])
+    const token = auth && auth.split(' ')[1]
     console.log(token)
-    //let result_id
     var decode
     if (!token)
         return res.status(400).send('Access Denied')
     try {
         decode = jwt.verify(token.toString(), process.env.ACCESS_TOKEN)
-        req.usr = decode
+        req.user = decode
         console.log(decode)
 
     } catch (error) {
@@ -35,6 +35,8 @@ async function verifAuth(req, res, next) {
     }
     return next()
 }
+//------------------------------------------------------------
+
 module.exports = {
     verifAuth
 }

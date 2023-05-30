@@ -125,7 +125,7 @@ async function login(req, res) {
             })
         })
 
-        res.header('x-access-token', accessToken)
+        //res.header('x-access-token', accessToken)
     })
 }
 
@@ -154,7 +154,7 @@ async function updateProfile(req, res) {
         }
         return res.status(200).json({
                 username: user.username,
-                    email: user.email,
+                email: user.email,
                     name: user.name,
                     password: user.password,
                     created_at: user.created_at
@@ -245,7 +245,7 @@ async function getAllPost(req, res) {
 async function getStoryUser(req, res) {
     const sql = `SELECT * FROM 
     post WHERE user_id =?`
-    //const id_user = req.body.id_user
+        //const id_user = req.body.id_user
     const id = req.params.id
 
     db.query(sql, [id], async function (error, rows) {
@@ -254,11 +254,11 @@ async function getStoryUser(req, res) {
                         return res.status(500).send(error)
                     }
 
-                    return res.status(200).json({
-                        user_id: rows[0].user_id,
-                        stori: rows[0].stori,
-                        sum_like: rows[0].sum_like
-                    })
+        return res.status(200).json({
+            user_id: rows[0].user_id,
+            stori: rows[0].stori,
+            sum_like: rows[0].sum_like
+        })
 
     })
 }
@@ -301,7 +301,7 @@ async function postDetectionUser(req, res) {
 async function getDetectionUser(req, res) {
     const sql = `SELECT * FROM 
     deteksi WHERE user_id =?`
-    //const id_user = req.body.id_user
+        //const id_user = req.body.id_user
     const id = req.params.id
 
     db.query(sql, [id], async function (error, rows) {
@@ -313,11 +313,11 @@ async function getDetectionUser(req, res) {
                     //     return res.status(200).json(element)
                     // }
                     return res.status(200).json({
-                        test_id: idtest,
-                        user_id: id,
-                        hasil_deteksi: hasil_deteksi
+                                test_id: idtest,
+                                user_id: id,
+                                hasil_deteksi: hasil_deteksi
 
-                    })
+        })
 
 
     })
@@ -392,23 +392,6 @@ async function postTest(req, res) {
     })
 
 }
-
-// app.post(`${version}/story`, async (req, res) => {
-//     const sql = `INSERT INTO post (user_id, stori, created_at) VALUES( ?, ?, ?)`
-//     const created_at = moment().format('YYYY-MM-DD HH:mm:ss').toString()
-
-//     const story = {
-//         user_id: req.body.user_id,
-//         stori: req.body.stori,
-//         created_at: created_at
-//     }
-//     db.query(sql, [story.user_id, story.story, story.created_at], async function (error, rows) {
-//         if (error) {
-//             console.error(error)
-//             return res.status(500).send('There\'s something wrong')
-//         }
-//     })
-// })
 
 module.exports = {
     users,

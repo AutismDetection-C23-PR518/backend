@@ -16,6 +16,8 @@ router.post(`${version}/create_post/:id`, verif.verifAuth, userController.create
 router.delete(`${version}/delete_post/:id/:id_post`, verif.verifAuth, userController.delete_post) //DONE
 router.get(`${version}/getstory/:id`, verif.verifAuth, userController.getStoryUser) //DONE
 router.get(`${version}/getallpost`, userController.getAllPost) //DONE
+router.put(`${version}/like_post`, userController.like_post)
+router.put(`${version}/unlike_post`, userController.unlike_post)
 
 //deteksi
 router.post(`${version}/posttest/:id`, verif.verifAuth, userController.postTest)

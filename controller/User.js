@@ -242,6 +242,22 @@ async function getAllPost(req, res) {
     })
 }
 
+async function like_post(req, res) {
+    const id_post= req.body.id_post
+    db.query("UPDATE post SET sum_like=sum_like+1 WHERE id_post =? ",[id_post], (error,result)=>{
+        if (error) throw error;
+        return res.send("Number of records affected: " + result.affectedRows);
+    })
+}
+
+async function unlike_post(req, res) {
+    const id_post= req.body.id_post
+    db.query("UPDATE post SET sum_like=sum_like-1 WHERE id_post =? AND sum_like>0",[id_post], (error,result)=>{
+        if (error) throw error;
+        return res.send("Number of records affected: " + result.affectedRows);
+    })
+}
+
 async function getStoryUser(req, res) {
     const sql = `SELECT * FROM 
     post WHERE user_id =?`
@@ -406,6 +422,8 @@ module.exports = {
     postTest,
     postDetectionUser,
     getDetectionUser,
-    getAllPost
+    getAllPost,
+    like_post,
+    unlike_post
 
 }

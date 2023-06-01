@@ -9,6 +9,47 @@ const express = require('express')
 const app = express()
 app.use(express.json())
 
+const { Storage } = require("@google-cloud/storage");
+const storage = new Storage({ keyFilename: "autism-detection-387205-c64d19d4cc02.json" });
+const bucketName = 'foto-profile';
+
+
+async function upFoto(req, res) {
+  if (!req.file) {
+    res.status(400).json({ error: 'No file uploaded' });
+    return;
+  }
+  const fileData = req.file;
+
+  const bucket = storage.bucket(bucketName);
+  const fileName = `${Date.now()}_${fileData.originalname}`;
+  const encodedFileName = encodeURIComponent(fileName);
+  const file = bucket.file(fileName);
+
+  const fileStream = file.createWriteStream({
+    metadata: {
+      contentType: fileData.mimetype,
+    },
+    resumable: false,
+  });
+
+  fileStream.on('error', (err) => {
+    console.error('Error uploading file:', err);
+    res.status(500).json({ error: 'Failed to upload file' });
+  });
+
+  fileStream.on('finish', () => {
+    const baseUrl = `https://storage.googleapis.com/${bucketName}/`;
+    const publicUrl = `${baseUrl}${encodedFileName}`;
+
+    res.json({ url: publicUrl });
+  });
+
+  fileStream.end(fileData.buffer);   
+    
+}
+
+
 function generateToken(user) {
     return jwt.sign(user, process.env.ACCESS_TOKEN, {
         expiresIn: '3d'
@@ -424,6 +465,7 @@ module.exports = {
     getDetectionUser,
     getAllPost,
     like_post,
-    unlike_post
+    unlike_post,
+    upFoto
 
 }

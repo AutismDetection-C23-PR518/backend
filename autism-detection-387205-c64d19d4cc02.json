@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "autism-detection-387205",
+  "private_key_id": "c64d19d4cc02159c4b3e00ef3fc7515d2ca5bd70",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDCB8vc2KVySXC3\ndqs/pVNCIJOjO+HoS3WQvBdMKlof12LpNp/7ku7jj25iYUSK24kFTw48Ad79GfUf\nlEg2LcHR8b8O0XHuSQFvAUz1SgCXzzrQ9Zu2smLsJvbwcdki3Ha9Q+WKxzBDgwLX\nUhXA54RBFSJaCO4vpsGXVBKBF305x+pctA3wSwPr8unTZD9fY4PGfuaDyjBshcYI\nRgbtrxpvcM5vbDiirbpNcTxQNSDucvYDBpkd3nj4VHOo7t0a3LMFBej66K7VJjUt\nyZxWBfat1u8RtxbFRqazStUGPBNrkiXF7/T0Q3Q2sdJH2sjhuLbhPwTHreHCqzCZ\nvsNsqZC1AgMBAAECggEAD5RNAqpkkmoiLPZQJsKcDksLqlzUX/Cwe71r3iI9F/cV\nNTuSb0KWKtsT6736oRmihV9vzv1UIxzH8/qrLP/R4w0W9at3Neunu/rYlo4UFnG9\nu78qJb+/YKMk9cZ2aa2rsmO2v8S289zGSCAKU3G4yqRV8fEV9ZPdUczJgD2wwN2l\nOYB9y71CUuw8MoVQaeRfjXf+R7hwn3P8Tui714Z+zkSv2sKm+Q94aXKfh1hUIXDk\nQOaf/gJXSvxAJvq8XQQKBBDRBiwi/VXhVlyi6uU0pMGmsEQVI7Xmfh/NXPY9NZJW\nmKBB1dGYmEMuv/YwQyQFxDeJtUYdBFEAceHRgukyGwKBgQD8sUjq2AEOph8GpzY5\nBSlyIBM+L5WyhI/8jrfNP9AZXx8iEI7ayn3yoR4N3V69QhxbOa3On1ReE37ilhEL\n+rTjDOIqkCmcARU6SddFHmD2iMEHIu7uxxX9s6xA7iJS8eM+Ch7KJItOrLxpgR4l\npC7Ij1puQ7zoHzXfHVuhoQZX2wKBgQDEkfLBp9Vsj00flRdVSrnp3N1lMNe1kvTm\nC4y2jInDSF8P5KIkHrj65YbKjqOoViOWJo5yt3FaLb2ylO954JeO1tTKOy0Ha+gd\nTESXw+C7Uwldg4FgVKNAYJZTMQEFisG7fS4nZOfDHMCI/9Z3sxf/xfaPMdrCwe+i\nSBWt+6smrwKBgDVFSpH3p4FnE/NbHNs4c1xT1rqtXWmc+J3NmIH0ifJPU0jjJLqL\nJbIYtTVHDcnoPgIdTr7YZ/jNM1qhOEbGO4wCE0vVyG/S6p63ImK33MkcW1Ud0DEW\nV1R8pDur+CB0TeuuRn9m5NdZIv868RgOXK57Sh0kupZUvg6jKcYRJD0xAoGAMd1Y\nOJoLwQNFLDrU9XUEXngBzbarMct6xpSteG2EUP6d5tk37HPCtxrcq6uthnl7g456\nWk2AusCZu6Cec0tvBvQmfLqwPI66DhyX1ewBqWNyH7/JZRdzZlRaLfZjbPV7GcWy\nnJmzVUKI8Pf9ftX2w5KDbmXWOcuar48buMv76c8CgYEArLeBhUyjiYUdgyavcG6+\nWPhUcY/DYITszwzNpGhUeo146HvoMp4hbjw2BRiAXUUnmxOHMR7nWoFFHPaAa/q3\nwr2+AHwmu4klcGvsW+FWiAHK9Ky49wex2ccSjvf4hulOaOchdn2LLDEd8gD62444\nBtm1SFa8lvYZ6qF6KqG7ImI=\n-----END PRIVATE KEY-----\n",
+  "client_email": "backendautismdetection@autism-detection-387205.iam.gserviceaccount.com",
+  "client_id": "105437446728008207809",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/backendautismdetection%40autism-detection-387205.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}

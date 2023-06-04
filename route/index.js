@@ -9,10 +9,10 @@ const verif = require('../middleware/verif.js')
 const version = '/api/v1'
 
 const multerConfig = multer({
-    storage: multer.memoryStorage(),
-    limits: {
-        fileSize: 5 * 1024 * 1024, // Batasan ukuran file (5MB)
-    },
+  storage: multer.memoryStorage(),
+  limits: {
+    fileSize: 5 * 1024 * 1024, // Batasan ukuran file (5MB)
+  },
 });
 
 

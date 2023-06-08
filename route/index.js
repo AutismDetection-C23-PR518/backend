@@ -9,10 +9,10 @@ const verif = require('../middleware/verif.js')
 const version = '/api/v1'
 
 const multerConfig = multer({
-  storage: multer.memoryStorage(),
-  limits: {
-    fileSize: 5 * 1024 * 1024, // Batasan ukuran file (5MB)
-  },
+    storage: multer.memoryStorage(),
+      limits: {
+        fileSize: 5 * 1024 * 1024, // Batasan ukuran file (5MB)
+      },
 });
 
 
@@ -23,7 +23,7 @@ router.post(`${version}/register`, userController.register)
 router.post(`${version}/login`, userController.login)
 router.patch(`${version}/updateprofile/:id_user`, verif.verifAuth, userController.update_user)
 router.delete(`${version}/deleteuser/:id_user`, verif.verifAuth, userController.delete_user)
-router.post(`${version}/upFoto`, verif.verifAuth, multerConfig.single('photo'), userController.upFoto)
+router.post(`${version}/upfoto`, verif.verifAuth, multerConfig.single('photo'), userController.upFoto)
 
 //test route
 router.get(`${version}/alltest`, testController.getAllTest)

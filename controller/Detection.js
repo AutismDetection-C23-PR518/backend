@@ -5,7 +5,7 @@ const User = require('../models/userModel.js')
 require('dotenv').config()
 const db = require('../config/Database.js')
 const moment = require('moment')
-const bcrypt = require('bcrypt')
+const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const verif = require('../middleware/verif.js')
 

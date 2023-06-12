@@ -1,7 +1,7 @@
 const User = require('../models/userModel.js')
 require('dotenv').config()
 const moment = require('moment')
-const bcrypt = require('bcrypt')
+const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 
 const express = require('express')

@@ -7,7 +7,7 @@ const app = express()
 app.use(express.json())
 
 // ;
-// (async () => {
+// (async() => {
 //     await db.sync()
 // })()
 app.use(router)

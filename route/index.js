@@ -14,7 +14,10 @@ const multerConfig = multer({
         fileSize: 5 * 1024 * 1024, // Batasan ukuran file (5MB)
     },
 });
-
+router.get("/", (req, res) => {
+    console.log("Response success")
+    res.send("Response Success!")
+})
 
 //user route
 router.get(`${version}/alluser`, userController.getAllUser)

@@ -78,7 +78,7 @@ async function create_post(req, res) {
 async function getPostByIdPost(req, res) {
     try {
         const post = await Post.findOne({
-            attributes: ['id_test', 'id_user', 'A1', 'A2', 'A3', 'A4', 'A5', 'A6', 'A7', 'A8', 'A9', 'A10', 'Q_score', 'gender', 'ethnicity', 'jaundice', 'family_with_ASD', 'who_test'],
+            attributes: ['id_post', 'id_user', 'post', 'sum_like', 'createdAt'],
             where: [{
                 id_user: req.params.id_user
             }, {

@@ -43,29 +43,29 @@ async function upFoto(req, res) {
                 contentType: fileData.mimetype,
             },
             resumable: false,
-        });
+        })
 
         fileStream.on('error', (error) => {
-            console.error('Error uploading file:', error);
+            console.error('Error uploading file:', error)
             res.status(500).json({
                 error: 'Failed to upload file'
-            });
-        });
+            })
+        })
 
         fileStream.on('finish', () => {
-            const baseUrl = `https://storage.googleapis.com/${bucketName}/`;
-            const publicUrl = `${baseUrl}${photoProfile}`;
+            const baseUrl = `https://storage.googleapis.com/${bucketName}/`
+            const publicUrl = `${baseUrl}${photoProfile}`
 
             res.json({
                 url: publicUrl
-            });
-        });
-        fileStream.end(fileData.buffer);
+            })
+        })
+        fileStream.end(fileData.buffer)
     } catch (error) {
-        console.error('Error uploading file:', error);
+        console.error('Error uploading file:', error)
         res.status(500).json({
             error: 'Failed to upload file'
-        });
+        })
     }
 }
 
@@ -74,30 +74,24 @@ async function getPhotoProfile(req, res) {
     const filename = `foto_profil_${id_user}.jpg`
 
     const file = storage.bucket(bucketName).file(filename)
-    const fileStream = file.createWriteStream({
-        metadata: {
-            contentType: fileData.mimetype,
-        },
-        resumable: false,
-    });
+    const fileStream = file.createWriteStream()
 
     fileStream.on('error', (error) => {
-        console.error('Error uploading file:', error);
+        console.error('Error uploading file:', error)
         res.status(500).json({
             error: 'Failed to upload file'
-        });
-    });
+        })
+    })
 
     fileStream.on('finish', () => {
-        const baseUrl = `https://storage.googleapis.com/${bucketName}/`;
-        const publicUrl = `${baseUrl}${filename}`;
+        const baseUrl = `https://storage.googleapis.com/${bucketName}/`
+        const publicUrl = `${baseUrl}${filename}`
 
         res.json({
             url: publicUrl
-        });
-    });
+        })
+    })
 
-    fileStream.end(fileData.buffer);
 }
 
 function generateToken(user) {

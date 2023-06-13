@@ -2,14 +2,11 @@ const {
     Sequelize
 } = require('sequelize')
 
-const connect = new Sequelize('autismdetection', 'root', 'autism', {
-    host: '34.101.162.82',
-    dialect: 'mysql',
-    //connectTimeout: 300000
-    //port: 3306,
-    // username: '',
-    // password: '',
-    // database:''
+require('dotenv').config()
+const connect = new Sequelize(process.env.DB_NAME, process.env.DB_USERNAME, process.env.DB_PASSWORD, {
+    host: process.env.DB_HOSTNAME,
+    dialect: process.env.DB_DIALECT,
+
 })
 try {
     connect.authenticate();

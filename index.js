@@ -11,6 +11,6 @@ app.use(express.json())
 //     await db.sync()
 // })()
 app.use(router)
-app.listen(9000, () => {
-    console.log('Server Berjalan di Port : ' + 9000);
+app.listen(process.env.PORT, () => {
+    console.log('Server Berjalan di Port : ' + process.env.PORT);
 });

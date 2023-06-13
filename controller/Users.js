@@ -17,19 +17,63 @@ const storage = new Storage({
 const bucketName = 'foto-profile';
 
 async function upFoto(req, res) {
+    const id_user = req.params.id_user
     if (!req.file) {
         res.status(400).json({
             error: 'No file uploaded'
-        });
-        return;
+        })
+        return
     }
-    const fileData = req.file;
+    const fileData = req.file
+    const photoProfile = `foto_profil_${id_user}.jpg`
 
-    const bucket = storage.bucket(bucketName);
-    const fileName = `${Date.now()}_${fileData.originalname}`;
-    const encodedFileName = encodeURIComponent(fileName);
-    const file = bucket.file(fileName);
+    try {
+        const bucket = storage.bucket(bucketName)
 
+        await bucket.file(photoProfile).delete().catch((error) => {
+            if (error.code !== 404) {
+                throw error
+            }
+        })
+
+        const file = bucket.file(photoProfile);
+
+        const fileStream = file.createWriteStream({
+            metadata: {
+                contentType: fileData.mimetype,
+            },
+            resumable: false,
+        });
+
+        fileStream.on('error', (error) => {
+            console.error('Error uploading file:', error);
+            res.status(500).json({
+                error: 'Failed to upload file'
+            });
+        });
+
+        fileStream.on('finish', () => {
+            const baseUrl = `https://storage.googleapis.com/${bucketName}/`;
+            const publicUrl = `${baseUrl}${photoProfile}`;
+
+            res.json({
+                url: publicUrl
+            });
+        });
+        fileStream.end(fileData.buffer);
+    } catch (error) {
+        console.error('Error uploading file:', error);
+        res.status(500).json({
+            error: 'Failed to upload file'
+        });
+    }
+}
+
+async function getPhotoProfile(req, res) {
+    const id_user = req.params.id_user
+    const filename = `foto_profil_${id_user}.jpg`
+
+    const file = storage.bucket(bucketName).file(filename)
     const fileStream = file.createWriteStream({
         metadata: {
             contentType: fileData.mimetype,
@@ -37,8 +81,8 @@ async function upFoto(req, res) {
         resumable: false,
     });
 
-    fileStream.on('error', (err) => {
-        console.error('Error uploading file:', err);
+    fileStream.on('error', (error) => {
+        console.error('Error uploading file:', error);
         res.status(500).json({
             error: 'Failed to upload file'
         });
@@ -46,7 +90,7 @@ async function upFoto(req, res) {
 
     fileStream.on('finish', () => {
         const baseUrl = `https://storage.googleapis.com/${bucketName}/`;
-        const publicUrl = `${baseUrl}${encodedFileName}`;
+        const publicUrl = `${baseUrl}${filename}`;
 
         res.json({
             url: publicUrl
@@ -54,7 +98,6 @@ async function upFoto(req, res) {
     });
 
     fileStream.end(fileData.buffer);
-
 }
 
 function generateToken(user) {
@@ -242,6 +285,7 @@ async function delete_user(req, res) {
 
 module.exports = {
     upFoto,
+    getPhotoProfile,
     getAllUser,
     getUserById,
     register,

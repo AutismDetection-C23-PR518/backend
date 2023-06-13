@@ -26,9 +26,9 @@ router.post(`${version}/register`, userController.register)
 router.post(`${version}/login`, userController.login)
 router.patch(`${version}/updateprofile/:id_user`, verif.verifAuth, userController.update_user)
 router.delete(`${version}/deleteuser/:id_user`, verif.verifAuth, userController.delete_user)
-router.post(`${version}/upfoto`, verif.verifAuth, multerConfig.single('photo'), userController.upFoto)
-
-//test route
+router.post(`${version}/upfoto/:id_user`, verif.verifAuth, multerConfig.single('photo'), userController.upFoto)
+router.get(`${version}/getfotoprofile/:id_user`, userController.getPhotoProfile)
+    //test route
 router.get(`${version}/alltest`, testController.getAllTest)
 router.get(`${version}/gettest/:id_user`, testController.getTestByIdUser)
 router.get(`${version}/test/:id_user/:id_test`, testController.getTestById)

@@ -25,17 +25,8 @@ const User = db.define('user', {
                     if (/\s/.test(value)) {
                         throw new Error('Must not contain spaces')
                     }
-                },
-                async isUnique(value) {
-                    const usern = await User.findOne({
-                        where: {
-                            username: value
-                        }
-                    })
-                    if (usern) {
-                        throw new Error('Username already exist')
-                    }
                 }
+
             }
         },
         email: {
@@ -45,16 +36,6 @@ const User = db.define('user', {
             validate: {
                 notEmpty: true,
                 isEmail: true,
-                async isUnique(value) {
-                    const usere = await User.findOne({
-                        where: {
-                            email: value
-                        }
-                    })
-                    if (usere) {
-                        throw new Error('Email already exist')
-                    }
-                }
             }
         },
         password: {

@@ -18,6 +18,16 @@ const bucketName = 'foto-profile';
 
 async function upFoto(req, res) {
     const id_user = req.params.id_user
+    const user = await User.findOne({
+        where: {
+            id_user: id_user
+        }
+    })
+    if (!user) {
+        return res.status(404).json({
+            message: 'User not found'
+        })
+    }
     if (!req.file) {
         res.status(400).json({
             error: 'No file uploaded'
@@ -25,7 +35,7 @@ async function upFoto(req, res) {
         return
     }
     const fileData = req.file
-    const photoProfile = `foto_profil_${id_user}.jpg`
+    const photoProfile = `foto_profil_${user.name}.jpg`
 
     try {
         const bucket = storage.bucket(bucketName)
@@ -56,7 +66,9 @@ async function upFoto(req, res) {
             const baseUrl = `https://storage.googleapis.com/${bucketName}/`
             const publicUrl = `${baseUrl}${photoProfile}`
 
-            res.json({
+            return res.json({
+                id_user: id_user,
+                name: user.name,
                 url: publicUrl
             })
         })
@@ -71,26 +83,38 @@ async function upFoto(req, res) {
 
 async function getPhotoProfile(req, res) {
     const id_user = req.params.id_user
-    const filename = `foto_profil_${id_user}.jpg`
+    const user = await User.findOne({
+        where: {
+            id_user: id_user
+        }
+    })
+    if (!user) {
+        return res.status(404).json({
+            message: 'User not found'
+        })
+    }
+    const filename = `foto_profil_${user.name}.jpg`
 
     const file = storage.bucket(bucketName).file(filename)
-    const fileStream = file.createWriteStream()
-
-    fileStream.on('error', (error) => {
-        console.error('Error uploading file:', error)
-        res.status(500).json({
-            error: 'Failed to upload file'
-        })
-    })
-
-    fileStream.on('finish', () => {
-        const baseUrl = `https://storage.googleapis.com/${bucketName}/`
-        const publicUrl = `${baseUrl}${filename}`
-
-        res.json({
+    try {
+        const existphoto = await file.exists()
+        if (!existphoto[0]) {
+            return res.status(404).json({
+                message: 'Photo profile not found'
+            })
+        }
+        const publicUrl = await file.publicUrl()
+        return res.status(200).json({
+            id_user: id_user,
+            nama: user.name,
             url: publicUrl
         })
-    })
+    } catch (error) {
+        console.error(error)
+        return res.status(500).json({
+            error: 'There\'s something wrong',
+        })
+    }
 
 }
 
@@ -141,8 +165,40 @@ async function register(req, res) {
         password: hashPassword,
         created_at: created_at
     }
+    const lowercase = /^[a-z0-9_.]+$/
+
+    const userr = await User.findAll({})
     if (req.body.password.length < 8) {
         return res.status(400).send('Password minimal 8 karakter!')
+    }
+    if (user.email !== userr.email) {
+        const existEmail = await User.findOne({
+            where: {
+                email: user.email
+            }
+        })
+        if (existEmail) {
+            return res.status(400).json({
+                error: 'Email already exist'
+            })
+        }
+    }
+    if (!lowercase.test(user.username)) {
+        return res.status(400).json({
+            message: 'Only can use lowercase letters, numbers, underscore(-), and period(.)'
+        })
+    }
+    if (user.username !== userr.username) {
+        const existUsername = await User.findOne({
+            where: {
+                username: user.username
+            }
+        })
+        if (existUsername) {
+            return res.status(400).json({
+                error: 'Username already exist'
+            })
+        }
     }
     try {
 
@@ -221,6 +277,12 @@ async function login(req, res) {
 async function update_user(req, res) {
     const hashPassword = await bcrypt.hash(req.body.password, 12)
     const id_user = req.params.id_user
+    const name = req.body.name
+    const username = req.body.username
+    const email = req.body.email
+
+    const lowercase = /^[a-z0-9_.]+$/
+
     const user = await User.findOne({
         where: {
             id_user: id_user
@@ -229,30 +291,61 @@ async function update_user(req, res) {
     if (req.body.password.length < 8) {
         return res.status(400).send('Password minimal 8 karakter!')
     }
+    if (email !== user.email) {
+        const existEmail = await User.findOne({
+            where: {
+                email: email
+            }
+        })
+        if (existEmail) {
+            return res.status(400).json({
+                error: 'Email already exist'
+            })
+        }
+    }
+    if (!lowercase.test(username)) {
+        return res.status(400).json({
+            message: 'Only can use lowercase letters, numbers, underscore(-), and period(.)'
+        })
+    }
+    if (username !== user.username) {
+        const existUsername = await User.findOne({
+            where: {
+                username: username
+            }
+        })
+        if (existUsername) {
+            return res.status(400).json({
+                error: 'Username already exist'
+            })
+        }
+    }
     try {
         await User.update({
-            name: req.body.name,
-            username: req.body.username,
-            email: req.body.email,
+            name: name,
+            username: username,
+            email: email,
             password: hashPassword
         }, {
             where: {
                 id_user: user.id_user
             }
         })
+        const update = await User.findOne({
+
+            attributes: ['id_user', 'name', 'username', 'email', 'password'],
+            where: {
+                id_user: req.params.id_user
+            }
+        })
+        res.status(200).json(update)
     } catch (error) {
+
         res.status(400).json({
             message: error.message
         })
     }
-    const update = await User.findOne({
 
-        attributes: ['id_user', 'name', 'username', 'email', 'password'],
-        where: {
-            id_user: req.params.id_user
-        }
-    })
-    res.status(200).json(update)
 
 
 }

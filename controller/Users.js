@@ -35,7 +35,7 @@ async function upFoto(req, res) {
         return
     }
     const fileData = req.file
-    const photoProfile = `foto_profil_${user.name}.jpg`
+    const photoProfile = `foto_profil_${user.username}.jpg`
 
     try {
         const bucket = storage.bucket(bucketName)
@@ -93,7 +93,7 @@ async function getPhotoProfile(req, res) {
             message: 'User not found'
         })
     }
-    const filename = `foto_profil_${user.name}.jpg`
+    const filename = `foto_profil_${user.username}.jpg`
 
     const file = storage.bucket(bucketName).file(filename)
     try {
